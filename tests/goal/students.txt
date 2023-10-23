@@ -1,0 +1,27 @@
+SQL queries to create 3NF:
+
+CREATE TABLE Students ( 
+    StudentID INT PRIMARY KEY, 
+    FirstName VARCHAR(255), 
+    LastName VARCHAR(255) 
+); 
+ 
+CREATE TABLE Courses ( 
+    Course VARCHAR(50) PRIMARY KEY, 
+    CourseStart DATE, 
+    CourseEnd DATE, 
+    Professor VARCHAR(50), 
+    FOREIGN KEY (Professor) REFERENCES Professors(ProfessorName) 
+);
+
+CREATE TABLE Professors ( 
+    ProfessorName VARCHAR(50) PRIMARY KEY, 
+    ProfessorEmail VARCHAR(100) 
+);
+
+CREATE TABLE StudentCourses ( 
+    StudentID INT, 
+    Course VARCHAR(255), 
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID), 
+    FOREIGN KEY (Course) REFERENCES Courses(Course) 
+);

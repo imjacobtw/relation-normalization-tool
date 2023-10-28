@@ -11,14 +11,13 @@ def Main():
     successStyle = "bold green"
     failureStyle = "bold red"
     relationInput = Relation()
-    outputFilePath = ""
 
     try:
-        filePath = inputparser.ReadFilePath()
+        inputFilePath = inputparser.ReadInputFilePath()
         console.print("Successful: CSV file provided.\n", style=successStyle)
 
-        relationInput.name = Relation.GetNameFromFile(filePath)
-        relationInput.attributes = Relation.GetAttributesFromFile(filePath)
+        relationInput.name = Relation.GetNameFromFile(inputFilePath)
+        relationInput.attributes = Relation.GetAttributesFromFile(inputFilePath)
 
         functionalDependencies = inputparser.ReadFunctionalDependencies(
             relationInput
@@ -33,20 +32,26 @@ def Main():
 
         primaryKey = inputparser.ReadPrimaryKey(relationInput)
         console.print("Successful: Primary key provided.\n", style=successStyle)
+
+        outputFilePath = inputparser.ReadOutputFilePath()
+        console.print(
+            "Successful: Output file path provided.\n",
+            style=successStyle
+        )
     except Exception as e:
         console.print(e, style=failureStyle)
         sys.exit()
 
     relationInput.functionalDependencies = functionalDependencies
     relationInput.primaryKey = primaryKey
-
-    print(relationInput.name)
-    print(relationInput.attributes)
-    print(relationInput.functionalDependencies)
-    print(relationInput.primaryKey)
+    outputFileName = relationInput.name.lower() + ".sql"
 
     normalizedRelations = normalizer.Normalize(relationInput, normalForm)
-    querygenerator.GenerateQueryOutput(normalizedRelations, outputFilePath)
+    querygenerator.GenerateQueryOutput(
+        normalizedRelations,
+        outputFilePath,
+        outputFileName
+    )
 
 
 if __name__ == "__main__":

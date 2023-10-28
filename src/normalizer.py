@@ -1,2 +1,9 @@
 def Normalize(relation, normalForm):
-    pass
+    normalizedRelations = []
+
+    match normalForm:
+        case "1NF":
+            normalizedRelations.append(relation)
+    
+    return normalizedRelations
+    

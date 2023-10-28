@@ -6,7 +6,7 @@ def FileIsEmpty(filePath):
     return os.stat(filePath).st_size == 0
 
 
-def ReadFilePath():
+def ReadInputFilePath():
     print("Please provide the absolute path to the CSV file with the relation"
           " you want to normalize:")
 
@@ -20,6 +20,17 @@ def ReadFilePath():
     
     if (FileIsEmpty(filePathInput)):
         raise Exception("File is empty.")
+
+    return filePathInput
+
+
+def ReadOutputFilePath():
+    print("Please provide the absolute path to the directory for the output:")
+
+    filePathInput = fr"{input()}"
+    
+    if (not os.path.isdir(filePathInput)):
+        raise Exception("Path provided is not a valid directory.")
 
     return filePathInput
 

@@ -59,19 +59,13 @@ def Main():
 
     print(f'Normalizing relation "{relationInput.name}"...')
 
-    normalizedRelations = normalizer.Normalize(relationInput, normalForm)
-    querygenerator.GenerateQueryOutput(normalizedRelations, fullOutputFilePath)
-
-    # try:
-    #     normalizedRelations = normalizer.Normalize(relationInput, normalForm)
-    #     querygenerator.GenerateQueryOutput(
-    #         normalizedRelations,
-    #         fullOutputFilePath
-    #     )
-    #    console.print(f"Finished normalization process.", style=successStyle)
-    # except:
-    #     console.print("There was an error normalizing the relation.", style=failureStyle)
-    #     sys.exit()
+    try:
+        normalizedRelations = normalizer.Normalize(relationInput, normalForm)
+        querygenerator.GenerateQueryOutput(normalizedRelations, fullOutputFilePath)
+        console.print(f"Finished normalization process.", style=successStyle)
+    except Exception as e:
+        console.print("There was an error normalizing the relation.", style=failureStyle)
+        sys.exit()
 
 
 if __name__ == "__main__":

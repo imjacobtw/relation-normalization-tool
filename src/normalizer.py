@@ -133,7 +133,56 @@ def ConvertTo3NF(relation):
 
 
 def ConvertToBCNF(relation):
-    return [relation]
+    if IsInBCNF(relation):
+        return [relation]
+    
+    global newRelationNumber
+    denormalizedRelations = [relation]
+    normalizedRelations = []
+
+    if not IsIn3NF(relation):
+        denormalizedRelations = ConvertTo3NF(relation)
+
+    for denormalizedRelation in denormalizedRelations:
+        if IsInBCNF(denormalizedRelation):
+            normalizedRelations.append(denormalizedRelation)
+            continue
+
+        parentRelation = Relation()
+        parentRelation.name = f"{relation.name}_{newRelationNumber}"
+        newRelationNumber += 1
+        parentRelation.primaryKey = denormalizedRelation.primaryKey
+        parentRelation.keys = denormalizedRelation.keys
+        parentRelation.attributes = denormalizedRelation.attributes
+        normalizedRelations.append(parentRelation)
+
+        for functionalDependency in denormalizedRelation.functionalDependencies:
+            leftSideIsNonkey = not LeftHandSideIsPrimeAttribute(
+                functionalDependency, denormalizedRelation
+            )
+
+            if leftSideIsNonkey:
+                for attribute in functionalDependency.rightSide:
+                    parentRelation.attributes.remove(attribute)
+                childRelation = Relation()
+                childRelation.name = f"{relation.name}_{newRelationNumber}"
+                newRelationNumber += 1
+                childRelation.attributes = (
+                    functionalDependency.leftSide + functionalDependency.rightSide
+                )
+
+                childRelationKey = Key()
+                childRelationKey.attributes = functionalDependency.leftSide
+                childRelationKey.isPrimary = True
+
+                childRelation.primaryKey = childRelationKey
+                childRelation.keys.append(childRelationKey)
+                childRelation.functionalDependencies.append(functionalDependency)
+                normalizedRelations.append(childRelation)
+            else:
+                parentRelation.functionalDependencies.append(functionalDependency)
+
+    return normalizedRelations
 
 
 def ConvertTo4NF(relation):

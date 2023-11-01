@@ -1,7 +1,12 @@
-CREATE TABLE LOTS_3NF (
+CREATE TABLE LOTS_3NF_1 (
 	PropertyID INT,
-	CountyName VARCHAR(255),
 	LotNumber INT,
 	Area VARCHAR(255),
 	PRIMARY KEY (PropertyID)
+);
+
+CREATE TABLE LOTS_3NF_2 (
+	Area VARCHAR(255),
+	CountyName VARCHAR(255),
+	PRIMARY KEY (Area)
 );

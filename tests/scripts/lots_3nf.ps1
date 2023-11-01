@@ -3,7 +3,7 @@ PropertyID -> CountyName LotNumber Area
 CountyName LotNumber -> PropertyID Area
 Area -> CountyName
 exit
-3NF
+BCNF
 PropertyID
 CountyName LotNumber
 exit

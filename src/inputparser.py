@@ -1,4 +1,5 @@
 from functionaldependency import FunctionalDependency
+from key import Key
 import os
 
 
@@ -51,19 +52,17 @@ def ParseFunctionalDependency(userInput):
     return functionalDependency
 
 
-def IsValidFunctionalDependency(functionalDependency, relation):
-    for attribute in functionalDependency.leftSide:
-        if (attribute not in relation.attributes):
-            return False
-        
-    for attribute in functionalDependency.rightSide:
-        if (attribute not in relation.attributes):
+def IsValidFunctionalDependency(functionalDependency, attributes):
+    allAttributes = functionalDependency.leftSide + functionalDependency.rightSide
+    
+    for attribute in allAttributes:
+        if (attribute not in attributes):
             return False
 
     return True
 
 
-def ReadFunctionalDependencies(relation):
+def ReadFunctionalDependencies(attributes):
     print("Please provide the functional dependencies of the relation (type "
           "\"exit\" when finished):")
     print("Format: attribute1 -> attribute2 ... attributeN")
@@ -74,7 +73,7 @@ def ReadFunctionalDependencies(relation):
     while (userInput != "exit"):
         functionalDependency = ParseFunctionalDependency(userInput)
 
-        if (not IsValidFunctionalDependency(functionalDependency, relation)):
+        if (not IsValidFunctionalDependency(functionalDependency, attributes)):
             raise Exception("Functional dependency contains invalid attributes.")
 
         functionalDependencies.append(functionalDependency)
@@ -95,17 +94,44 @@ def ReadNormalForm():
     return normalFormInput
 
 
+def IsValidKey(key, relationAttributes):
+    for attribute in key.attributes:
+        if (attribute not in relationAttributes):
+            return False
+
+    return True
+
+
+def ReadKeys(attributes):
+    print("Please provide all of the candidate keys (type "
+          "\"exit\" when finished):")
+    print("Format: attribute1 ... attributeN")
+
+    userInput = input()
+    keys = []
+
+    while (userInput != "exit"):
+        key = Key()
+        key.attributes = userInput.split()
+
+        if (not IsValidKey(key, attributes)):
+            raise Exception("Key contains invalid attributes.")
+
+        keys.append(key)
+        userInput = input()
+
+    return keys
+
+
 def ReadPrimaryKey(relation):
-    print("Please provide the primary/composite key of the relation:")
+    print("Please provide the primary key of the relation:")
     print("Format: attribute1 ... attributeN")
 
     primaryKeyInput = input()
-    splitPrimaryKeyInput = primaryKeyInput.split()
+    splitPrimaryKeyInput = primaryKeyInput.split() 
 
-    for attribute in splitPrimaryKeyInput:
-        if (attribute not in relation.attributes):
-            raise Exception(f"Attribute \"{attribute}\" is not an attribute " +
-                            f"of the given relation \"{relation.name}\".")
+    for key in relation.keys:
+        if (splitPrimaryKeyInput == key.attributes):
+            return splitPrimaryKeyInput
         
-    return splitPrimaryKeyInput
-
+    raise Exception("Primary key input is not a key of the given relation.")

@@ -1,19 +1,37 @@
 class FunctionalDependency:
-    @classmethod
-    def __init__(self, leftSide = [], rightSide = []):
-        self.leftSide = leftSide
-        self.rightSide = rightSide
+    def __init__(self):
+        self.leftSide = []
+        self.rightSide = []
 
-    @classmethod
-    def __str__(self):
-        resultString = ""
+
+    def IsPartial(self, relation):
+        leftSideOnlyPrimeAttributes = True
+        leftSideContainsEveryPrimeAttribute = True
+        rightSideAllNonPrimeAttributes = True
+
+        if (self.leftSide != relation.primaryKey.attributes):
+            leftSideContainsEveryPrimeAttribute = False
 
         for attribute in self.leftSide:
-            resultString += f"{attribute}, "
-
-        resultString += "-> "
+            if (not AttributeIsPrime(relation, attribute)):
+                leftSideOnlyPrimeAttributes = False
 
         for attribute in self.rightSide:
-            resultString += f"{attribute}, "
+            if (AttributeIsPrime(relation, attribute)):
+                rightSideAllNonPrimeAttributes = False
 
-        return resultString
+        return (leftSideOnlyPrimeAttributes) and \
+               (not leftSideContainsEveryPrimeAttribute) and \
+               (rightSideAllNonPrimeAttributes)
+    
+
+    
+    def __repr__(self):
+        return f"{self.leftSide} -> {self.rightSide}"
+
+
+def AttributeIsPrime(relation, attribute):
+    for key in relation.keys:
+        if (attribute in key.attributes):
+            return True
+    return False

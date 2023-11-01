@@ -1,9 +1,5 @@
-import os
-
-
-def GenerateQueryOutput(normalizedRelations, outputFilePath, fileName):
-    fullFilePath = os.path.join(outputFilePath, fileName)
-    file = open(fullFilePath, "w")
+def GenerateQueryOutput(normalizedRelations, filePath):
+    file = open(filePath, "w")
     
     for relation in normalizedRelations:
         createTableStatement = GenerateCreateTableStatement(relation)
@@ -24,7 +20,7 @@ def GenerateCreateTableStatement(relation):
 
 def GenerateAttributeType(attributeName):
     attributePotentialTypes = {
-        "INT": ["id"],
+        "INT": ["id", "number", "no", "hours"],
         "DATE": ["start", "end"],
     }
 
@@ -40,10 +36,10 @@ def GeneratePrimaryKeyStatement(primaryKey):
     resultString = f"\tPRIMARY KEY ("
     primaryKeyString = ""
 
-    for key in primaryKey:
+    for key in primaryKey.attributes:
         primaryKeyString += key
 
-        if (key != primaryKey[-1]):
+        if (key != primaryKey.attributes[-1]):
             primaryKeyString += ", "
 
     resultString += f"{primaryKeyString})\n"

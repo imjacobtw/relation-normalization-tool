@@ -20,8 +20,9 @@ Details to note:
 - Attribute types are inferred from the given names of the attributes.
 - PEP 8 guidelines were not completely followed. I do not expect this project to become a prominent library that other developers maintain.
 
-Features to add:
+Features to add/modify:
 - Fourth and fifth normal form conversion options.
+- Code restructure to improve readability and modularlity.
 
 ## Demo
 Given the file [tests/input/employee_projects.csv](https://github.com/imjacobtw/relation-normalizer/blob/main/tests/input/employee_projects.csv), a demo of the script may look like this:

@@ -1,9 +1,13 @@
 def GenerateQueryOutput(normalizedRelations, filePath):
     file = open(filePath, "w")
-    
+    fileText = ""
+
     for relation in normalizedRelations:
         createTableStatement = GenerateCreateTableStatement(relation)
-        file.write(createTableStatement)
+        fileText += createTableStatement
+
+    fileText = fileText[:-2]  
+    file.write(fileText)
 
 
 def GenerateCreateTableStatement(relation):
@@ -22,11 +26,12 @@ def GenerateAttributeType(attributeName):
     attributePotentialTypes = {
         "INT": ["id", "number", "no", "hours"],
         "DATE": ["start", "end"],
+        "REAL": ["rate", "price"]
     }
 
-    for (dataType, potentialSubstrings) in attributePotentialTypes.items():
+    for dataType, potentialSubstrings in attributePotentialTypes.items():
         for substring in potentialSubstrings:
-            if (substring in attributeName.lower()):
+            if substring in attributeName.lower():
                 return dataType
 
     return "VARCHAR(255)"
@@ -39,7 +44,7 @@ def GeneratePrimaryKeyStatement(primaryKey):
     for key in primaryKey.attributes:
         primaryKeyString += key
 
-        if (key != primaryKey.attributes[-1]):
+        if key != primaryKey.attributes[-1]:
             primaryKeyString += ", "
 
     resultString += f"{primaryKeyString})\n"

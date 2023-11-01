@@ -25,8 +25,7 @@ def Main():
             relationInput.attributes
         )
         console.print(
-            "Successful: Functional dependencies provided.\n",
-            style=successStyle
+            "Successful: Functional dependencies provided.\n", style=successStyle
         )
 
         normalForm = inputparser.ReadNormalForm()
@@ -41,10 +40,7 @@ def Main():
         console.print("Successful: Primary key provided.\n", style=successStyle)
 
         outputFilePath = inputparser.ReadOutputFilePath()
-        console.print(
-            "Successful: Output file path provided.\n",
-            style=successStyle
-        )
+        console.print("Successful: Output file path provided.\n", style=successStyle)
     except Exception as e:
         console.print(e, style=failureStyle)
         sys.exit()
@@ -54,20 +50,17 @@ def Main():
     outputFileName = relationInput.name.lower() + ".sql"
     fullOutputFilePath = os.path.join(outputFilePath, outputFileName)
 
-    print(f"Determining highest normal form of \"{relationInput.name}\"...")
+    print(f'Determining highest normal form of "{relationInput.name}"...')
     highestNormalForm = normalizer.DetermineHighestNormalForm(relationInput)
     console.print(
         f"The highest normal form of {relationInput.name} is {highestNormalForm}.",
-        style=infoStyle
+        style=infoStyle,
     )
 
-    print(f"Normalizing relation \"{relationInput.name}\"...")
+    print(f'Normalizing relation "{relationInput.name}"...')
 
     normalizedRelations = normalizer.Normalize(relationInput, normalForm)
-    querygenerator.GenerateQueryOutput(
-        normalizedRelations,
-        fullOutputFilePath
-    )
+    querygenerator.GenerateQueryOutput(normalizedRelations, fullOutputFilePath)
 
     # try:
     #     normalizedRelations = normalizer.Normalize(relationInput, normalForm)
@@ -79,6 +72,7 @@ def Main():
     # except:
     #     console.print("There was an error normalizing the relation.", style=failureStyle)
     #     sys.exit()
+
 
 if __name__ == "__main__":
     Main()

@@ -3,7 +3,7 @@ StudentID -> FirstName LastName
 Course -> CourseStart CourseEnd Professor
 Professor -> ProfessorEmail
 exit
-2NF
+3NF
 StudentID Course
 exit
 StudentID Course

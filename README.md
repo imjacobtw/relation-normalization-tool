@@ -55,6 +55,7 @@ Please provide all of the candidate keys (type "exit" when finished):
 Format: attribute1 ... attributeN
 PropertyID
 CountyName LotNumber
+exit
 Successful: Keys provided.
 
 Please provide the primary key of the relation:

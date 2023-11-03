@@ -1,0 +1,12 @@
+CREATE TABLE LOTS_BCNF_1 (
+	PropertyID INT,
+	LotNumber INT,
+	Area VARCHAR(255),
+	PRIMARY KEY (PropertyID)
+);
+
+CREATE TABLE LOTS_BCNF_2 (
+	Area VARCHAR(255),
+	CountyName VARCHAR(255),
+	PRIMARY KEY (Area)
+);

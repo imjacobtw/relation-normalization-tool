@@ -1,7 +1,15 @@
-class Key:
-    def __init__(self):
-        self.attributes = []
-        self.isPrimary = False
+from typing import List
 
-    def __repr__(self):
-        return f"Key: {self.attributes} {'(PRIMARY)' if self.isPrimary else ''}"
+
+class Key:
+    def __init__(self, attributes: List[str]) -> None:
+        self.attributes: List[str] = attributes
+
+    def __repr__(self) -> str:
+        result: str = "("
+
+        for attribute in self.attributes:
+            is_last: bool = attribute == self.attributes[-1]
+            result += f"{attribute}{", " if not is_last else ")"}"
+
+        return result

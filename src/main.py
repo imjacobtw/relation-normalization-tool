@@ -1,72 +1,39 @@
+from key import Key
 from relation import Relation
-from rich.console import Console
-import inputparser
-import normalizer
-import os
-import querygenerator
+from typing import List
+import iohandler
 import sys
 
 
-def Main():
-    console = Console()
-    successStyle = "bold green"
-    infoStyle = "bold deep_sky_blue1"
-    failureStyle = "bold red"
-    relationInput = Relation()
-
+def main(args: List[str]) -> None:
     try:
-        inputFilePath = inputparser.ReadInputFilePath()
-        console.print("Successful: CSV file provided.\n", style=successStyle)
+        input_file_path: str = iohandler.read_input_file_path()
 
-        relationInput.name = Relation.GetNameFromFile(inputFilePath)
-        relationInput.attributes = Relation.GetAttributesFromFile(inputFilePath)
-
-        functionalDependencies = inputparser.ReadFunctionalDependencies(
-            relationInput.attributes
-        )
-        console.print(
-            "Successful: Functional dependencies provided.\n", style=successStyle
+        iohandler.print_status_message("CSV file provided.\n", "success")
+        iohandler.print_status_message(
+            "CSV files will have heuristically generated SQL data types. It " \
+            "is recommended to review the data types for the attributes " \
+            "after the normalization process.\n",
+            "notice"
         )
 
-        normalForm = inputparser.ReadNormalForm()
-        console.print("Successful: Normal form provided.\n", style=successStyle)
+        relation_name: str = iohandler.read_relation_name(input_file_path)
+        relation_attributes: List[str] = iohandler.read_relation_attributes(input_file_path)
 
-        keys = inputparser.ReadKeys(relationInput.attributes)
-        console.print("Successful: Keys provided.\n", style=successStyle)
+        relation_candidate_keys: List[Key] = iohandler.read_candidate_keys(relation_attributes)
+        iohandler.print_status_message("Candidate keys provided.\n", "success")
 
-        relationInput.keys = keys
-
-        primaryKeyInput = inputparser.ReadPrimaryKey(relationInput)
-        console.print("Successful: Primary key provided.\n", style=successStyle)
-
-        outputFilePath = inputparser.ReadOutputFilePath()
-        console.print("Successful: Output file path provided.\n", style=successStyle)
+        # relation_primary_key: Key = iohandler.read_primary_key(relation_candidate_keys)
+        # iohandler.print_status_message("Primary key provided.\n", "success")
     except Exception as e:
-        console.print(e, style=failureStyle)
+        iohandler.print_status_message(e, "failure")
         sys.exit()
 
-    relationInput.functionalDependencies = functionalDependencies
-    relationInput.SetPrimaryKey(primaryKeyInput)
-    outputFileName = relationInput.name.lower() + ".sql"
-    fullOutputFilePath = os.path.join(outputFilePath, outputFileName)
-
-    print(f'Determining highest normal form of "{relationInput.name}"...')
-    highestNormalForm = normalizer.DetermineHighestNormalForm(relationInput)
-    console.print(
-        f"The highest normal form of {relationInput.name} is {highestNormalForm}.",
-        style=infoStyle,
-    )
-
-    print(f'Normalizing relation "{relationInput.name}"...')
-
-    try:
-        normalizedRelations = normalizer.Normalize(relationInput, normalForm)
-        querygenerator.GenerateQueryOutput(normalizedRelations, fullOutputFilePath)
-        console.print(f"Finished normalization process.", style=successStyle)
-    except Exception as e:
-        console.print("There was an error normalizing the relation.", style=failureStyle)
-        sys.exit()
-
-
+    # input_relation: Relation = Relation(
+    #     relation_name,
+    #     relation_attributes,
+    #     relation_candidate_keys,
+    #     relation_primary_key
+    # )
 if __name__ == "__main__":
-    Main()
+    main(sys.argv)

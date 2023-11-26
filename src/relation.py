@@ -1,38 +1,31 @@
 from key import Key
-
-import csv
-import os
+from typing import List
 
 
 class Relation:
-    def __init__(self):
-        self.name = ""
-        self.attributes = []
-        self.keys = []
-        self.primaryKey = None
-        self.functionalDependencies = []
+    def __init__(
+        self,
+        name: str,
+        attributes: List[str],
+        candidate_keys: List[Key],
+        primary_key: Key,
+    ) -> None:
+        self.name: str = name
+        self.attributes: List[str] = attributes
+        self.candidate_keys: List[Key] = candidate_keys
+        self.primary_key: Key = primary_key
 
-    def SetPrimaryKey(self, primaryKey):
-        for key in self.keys:
-            if primaryKey == key.attributes:
-                key.isPrimary = True
-                self.primaryKey = key
 
-    def GetAttributesFromFile(filePath):
-        with open(filePath) as file:
-            csvReader = csv.reader(file)
-            return next(csvReader)
+    def __repr__(self) -> None:
+        result: str = f"{self.name.upper()}("
 
-    def GetNameFromFile(filePath):
-        return os.path.splitext(os.path.basename(filePath))[0].upper()
-
-    def __repr__(self):
-        result = (
-            f"Relation: {self.name}\n"
-            f"Attributes: {self.attributes}\n"
-            f"Functional Dependencies: {self.functionalDependencies}\n"
-            f"Primary Key: {self.primaryKey}\n"
-            f"Keys: {self.keys}\n"
-        )
+        for attribute in self.attributes:
+            is_last: bool = attribute == self.attributes[-1]
+            is_primary_key_attribute: bool = attribute in self.primary_key.attributes
+            
+            result += "*" if is_primary_key_attribute else ""
+            result += attribute.name
+            result += "*" if is_primary_key_attribute else ""
+            result += ", " if not is_last else ")"
 
         return result

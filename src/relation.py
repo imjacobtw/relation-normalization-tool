@@ -16,7 +16,7 @@ class Relation:
         self.primary_key: Key = primary_key
 
 
-    def __repr__(self) -> None:
+    def __repr__(self) -> str:
         result: str = f"{self.name.upper()}("
 
         for attribute in self.attributes:
@@ -24,7 +24,7 @@ class Relation:
             is_primary_key_attribute: bool = attribute in self.primary_key.attributes
             
             result += "*" if is_primary_key_attribute else ""
-            result += attribute.name
+            result += attribute
             result += "*" if is_primary_key_attribute else ""
             result += ", " if not is_last else ")"
 

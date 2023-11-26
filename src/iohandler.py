@@ -66,7 +66,7 @@ def read_candidate_keys(relation_attributes: List[str]) -> List[Key]:
             raise Exception("Key contains invalid attributes.")
 
         candidate_keys.append(candidate_key)
-        user_input: str = input()
+        user_input = input()
 
     return candidate_keys
 
@@ -80,4 +80,22 @@ def is_valid_key(key: Key, relation_attributes: List[str]) -> bool:
 
 
 def read_primary_key(candidate_keys: List[Key]) -> Key:
-    pass
+    print("Provide the primary key (type \"exit\" when finished):")
+    print("Format: attribute1 ... attributeN")
+
+    user_input: str = input()
+    attributes: List[str] = user_input.split()
+    primary_key: Key = Key(attributes)
+
+    if not is_key_in_relation(primary_key, candidate_keys):
+        raise Exception("Primary key is not a candidate key of the relation.")
+    
+    return primary_key
+
+
+def is_key_in_relation(key: Key, relation_candidate_keys: List[Key]) -> bool:
+    for candidate_key in relation_candidate_keys:
+        if key == candidate_key:
+            return True
+    
+    return False

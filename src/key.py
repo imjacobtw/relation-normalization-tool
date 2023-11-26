@@ -13,3 +13,6 @@ class Key:
             result += f"{attribute}{", " if not is_last else ")"}"
 
         return result
+    
+    def __eq__(self, other) -> bool:
+        return self.attributes == other.attributes

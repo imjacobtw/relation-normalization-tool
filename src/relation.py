@@ -1,3 +1,4 @@
+from dependency import Dependency
 from key import Key
 from typing import List
 
@@ -9,11 +10,15 @@ class Relation:
         attributes: List[str],
         candidate_keys: List[Key],
         primary_key: Key,
+        functional_dependencies: List[Dependency],
+        multivalued_dependencies: List[Dependency]
     ) -> None:
         self.name: str = name
         self.attributes: List[str] = attributes
         self.candidate_keys: List[Key] = candidate_keys
         self.primary_key: Key = primary_key
+        self.functional_dependencies: List[Dependency] = functional_dependencies
+        self.multivalued_dependencies: List[Dependency] = multivalued_dependencies
 
 
     def __repr__(self) -> str:
@@ -26,6 +31,15 @@ class Relation:
             result += "*" if is_primary_key_attribute else ""
             result += attribute
             result += "*" if is_primary_key_attribute else ""
-            result += ", " if not is_last else ")"
+            result += ", " if not is_last else ")\n"
+
+        for key in self.candidate_keys:
+            result += f"{key}\n"
+
+        for functional_dependenecy in self.functional_dependencies:
+            result += f"{functional_dependenecy}\n"
+
+        for multivalued_dependency in self.multivalued_dependencies:
+            result += f"{multivalued_dependency}"
 
         return result

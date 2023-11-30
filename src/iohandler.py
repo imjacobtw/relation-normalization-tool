@@ -1,3 +1,4 @@
+from dependency import Dependency
 from key import Key
 from rich.console import Console
 from rich.text import Text
@@ -6,10 +7,27 @@ import csv
 import os
 
 
+NORMAL_FORMS: List[str] = [
+    "UNF",
+    "1NF",
+    "2NF",
+    "3NF",
+    # "EKNF",
+    "BCNF",
+    "4NF",
+    # "ETNF",
+    # "5NF",
+    # "DKNF",
+    #"6NF",
+]
+console: Console = Console()
+
 def read_input_file_path() -> str:
-    input_file_path: str = rf"{input(
-        "Provide the path to the file with the relation(s) you want to normalize:\n"
-    )}"
+    user_input: str = input(
+        "Provide the path to the file with the relation(s) you want to " \
+        "normalize:\n"
+    )
+    input_file_path: str = rf"{user_input}"
 
     if not os.path.exists(input_file_path):
         raise Exception("Provided path is invalid.")
@@ -27,7 +45,6 @@ def print_status_message(
     message_input: str, 
     status: Literal["success", "failure", "notice"]
 ) -> None:
-    console: Console = Console()
     message: Text = Text()
     message.append(f"[{status}] {message_input}")
 
@@ -99,3 +116,79 @@ def is_key_in_relation(key: Key, relation_candidate_keys: List[Key]) -> bool:
             return True
     
     return False
+
+
+def read_dependencies(
+    relation_attributes: List[str],
+    is_multivalued: bool
+) -> List[Dependency]:
+    print("Provide the functional dependencies (type \"exit\" when finished):")
+    print("Format: LAttribute1 ... LAttributeN " \
+          f"{'->>' if is_multivalued else '->'} RAttribute1 ... RAttributeN")
+    
+    user_input: str = input()
+    dependencies: List[Dependency] = []
+
+    while user_input != "exit":
+        dependency = parse_dependency(
+            user_input,
+            relation_attributes,
+            is_multivalued
+        )
+        dependencies.append(dependency)
+        user_input = input()
+
+    return dependencies
+
+
+def parse_dependency(
+    user_input: str,
+    relation_attributes: List[str],
+    is_multivalued: bool
+) -> Dependency:
+    if is_multivalued and ("->" in user_input):
+        raise Exception("Functional dependency provided when multivalued " \
+                        "dependency was expected.")
+    
+    if (not is_multivalued) and ("->>" in user_input):
+        raise Exception("Multivalued dependency provided when functional " \
+                        "dependency was expected.")
+    
+    left_side: List[str] = []
+    right_side: List[str] = []
+    parsing_left_side: bool = True
+
+    for substring in user_input.split():
+        if substring in ("->", "->>"):
+            parsing_left_side = False
+            continue
+
+        if substring not in relation_attributes:
+            raise Exception("Attributes provided are not in the relation.")
+
+        if parsing_left_side:
+            left_side.append(substring)
+        else:
+            right_side.append(substring)
+
+    return Dependency(left_side, right_side, is_multivalued)
+
+
+def read_normal_form() -> str:
+    print("The normal form to convert the relation into:")
+
+    normal_form_list_display: str = "("
+
+    for normal_form in NORMAL_FORMS:
+        is_last: bool = normal_form == NORMAL_FORMS[-1]
+        normal_form_list_display += normal_form
+        normal_form_list_display += ", " if not is_last else ")"
+
+    print(f"The available normal forms: {normal_form_list_display}")
+
+    normal_form_input: str = input()
+
+    if normal_form_input not in NORMAL_FORMS:
+        raise Exception("Invalid normal form provided.")
+    
+    return normal_form_input

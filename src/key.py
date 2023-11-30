@@ -1,4 +1,5 @@
 from typing import List
+import copy
 
 
 class Key:
@@ -10,9 +11,12 @@ class Key:
 
         for attribute in self.attributes:
             is_last: bool = attribute == self.attributes[-1]
-            result += f"{attribute}{", " if not is_last else ")"}"
+            result += f"{attribute}{', ' if not is_last else ')'}"
 
         return result
     
     def __eq__(self, other) -> bool:
         return self.attributes == other.attributes
+    
+    def __copy__(self) -> "Key":
+        return Key(self.attributes[:])

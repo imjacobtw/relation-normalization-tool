@@ -122,7 +122,8 @@ def read_dependencies(
     relation_attributes: List[str],
     is_multivalued: bool
 ) -> List[Dependency]:
-    print("Provide the functional dependencies (type \"exit\" when finished):")
+    print(f"Provide the {'multivalued' if is_multivalued else 'functional'} "
+          "dependencies (type \"exit\" when finished):")
     print("Format: LAttribute1 ... LAttributeN " \
           f"{'->>' if is_multivalued else '->'} RAttribute1 ... RAttributeN")
     
@@ -145,11 +146,7 @@ def parse_dependency(
     user_input: str,
     relation_attributes: List[str],
     is_multivalued: bool
-) -> Dependency:
-    if is_multivalued and ("->" in user_input):
-        raise Exception("Functional dependency provided when multivalued " \
-                        "dependency was expected.")
-    
+) -> Dependency:    
     if (not is_multivalued) and ("->>" in user_input):
         raise Exception("Multivalued dependency provided when functional " \
                         "dependency was expected.")

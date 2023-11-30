@@ -299,3 +299,17 @@ def convert_to_bcnf(relations: List[Relation]) -> List[Relation]:
 
 def is_in_4nf(relation: Relation) -> bool:
     return len(relation.multivalued_dependencies) == 0
+
+
+def convert_to_4nf(relations: List[Relation]) -> List[Relation]:
+    relations = convert_to_bcnf(relations)
+    normalized_relations: List[Relation] = relations[:]
+
+    for relation in relations:
+        if len(relation.multivalued_dependencies) == 0:
+            continue
+
+        for multivalued_dependency in relation.multivalued_dependencies:
+            pass
+
+    return normalized_relations

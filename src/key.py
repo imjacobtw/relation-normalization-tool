@@ -15,7 +15,10 @@ class Key:
 
         return result
     
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Key):
+            return NotImplemented
+        
         return self.attributes == other.attributes
     
     def __copy__(self) -> "Key":

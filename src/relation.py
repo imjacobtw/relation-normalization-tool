@@ -43,3 +43,15 @@ class Relation:
             result += f"{multivalued_dependency}"
 
         return result
+    
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Relation):
+            return NotImplemented
+
+        return (self.name == other.name) and \
+               (self.attributes == other.attributes) and \
+               (self.candidate_keys == other.candidate_keys) and \
+               (self.primary_key == other.primary_key) and \
+               (self.functional_dependencies == other.functional_dependencies) and \
+               (self.multivalued_dependencies == other.multivalued_dependencies)

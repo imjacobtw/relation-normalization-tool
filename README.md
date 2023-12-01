@@ -1,118 +1,146 @@
 # Relational Database Normalizer
-A Python script that takes a relation schema and its constraints as input, normalizes the schema to a desired normal form, and outputs the necessary SQL statements to generate the normalized relation schemas. This was an assignment for COMP SCI 5300 at Missouri S&amp;T.
+A Python script that takes a relation schema and its constraints as input, normalizes the schema to a desired normal form, and outputs the necessary SQL statements to generate the normalized relation schemas.
 
 ## Usage
-Install the dependencies:
+### Install the Dependencies
+Using `pip` directly:
 ```
 pip install -r requirements.txt
 ```
 
-Run the script:
+Using `make` targets:
+```
+make init
+```
+
+
+### Run the Script
+Using `python` directly:
 ```
 python src/main.py
 ```
 
+Using `make` targets:
+```
+make run
+```
+
+### Run the Tests
+Using `pytest` directly:
+```
+pytest
+```
+
+Using `make` targets:
+```
+make test
+```
+
 ## Description
-Information regarding the assignment details can be found in [docs/project.pdf](https://github.com/imjacobtw/relation-normalizer/blob/main/docs/project.pdf).
+This was an assignment for COMP SCI 5300 at Missouri S&T. Due to time contraints, I did not have time to implement all the necessary normal form conversions. Since normal forms higher than BCNF are often not practically used, I decided to implement up to BCNF. I plan to come back to this project and implement 4NF, 5NF, and 6NF at a minimum.
 
 Details to note:
 - Given CSV relation must already be in first normal form due to the standard of comma-separated value files.
-- Attribute types are inferred from the given names of the attributes.
-- Fourth and fifth normal form conversion has not been implemented.
-- PEP 8 guidelines were not completely followed. I do not expect this project to become a prominent library that other developers maintain.
+- Attribute types are heuristically generated from the given names of the attributes.
+- Supports up to 1NF, 2NF, 3NF, and BCNF conversion.
+- Utilizes PyTest for unit testing and Rich for displaying colored formatting in the terminal.
 
 Features to add/modify:
-- Fourth and fifth normal form conversion options.
+- Higher normal form conversion options.
 - Code restructure to improve readability and modularlity.
 
 ## Demo
-Given the file [tests/input/lots_3nf.csv](https://github.com/imjacobtw/relation-normalizer/blob/main/tests/input/lots_3nf.csv), here is a demo of the program.
+Given the file [tests/input/lots.csv](https://github.com/imjacobtw/relation-normalizer/blob/main/tests/input/lots.csv), here is a demo of the program.
 
 The relation given as input:
-##### LOTS_3NF
+##### LOTS
 | *PropertyID* | CountyName | LotNumber | Area | Price | TaxRate |
 |--------------|------------|-----------|------|-------|---------|
 
 ```
-Please provide the absolute path to the CSV file with the relation you want to normalize:
-..\relation-normalizer\tests\input\lots_3nf.csv
-Successful: CSV file provided.
+Provide the path to the file with the relation(s) you want to normalize:
+[success] CSV file provided.
+[success] Relation name parsed.
+[success] Attributes parsed.
 
-Please provide the functional dependencies of the relation (type "exit" when finished):
-Format: attribute1 -> attribute2 ... attributeN
-PropertyID -> CountyName LotNumber Area Price TaxRate
-CountyName LotNumber -> PropertyID Area Price TaxRate
-CountyName -> TaxRate
-Area -> Price
-exit
-Successful: Functional dependencies provided.
-
-Please provide the normal form you want to the relation to be in (1NF, 2NF, 3NF, BCNF, 4NF, 5NF):
-3NF
-Successful: Normal form provided.
-
-Please provide all of the candidate keys (type "exit" when finished):
+Provide all of the candidate keys (type "exit" when finished):  
 Format: attribute1 ... attributeN
-PropertyID
-CountyName LotNumber
-exit
-Successful: Keys provided.
+[success] Candidate keys provided.
 
-Please provide the primary key of the relation:
+Provide the primary key (type "exit" when finished):
 Format: attribute1 ... attributeN
-PropertyID
-Successful: Primary key provided.
+[success] Primary key provided.
 
-Please provide the absolute path to the directory for the output:
-Successful: Output file path provided.
+Provide the functional dependencies (type "exit" when finished):
+Format: LAttribute1 ... LAttributeN -> RAttribute1 ... RAttributeN
+[success] Functional dependencies provided.
 
-Determining highest normal form of "LOTS_3NF"...
-The highest normal form of LOTS_3NF is 1NF.
-Normalizing relation "LOTS_3NF"...
-Finished normalization process.
+Provide the multivalued dependencies (type "exit" when finished):
+Format: LAttribute1 ... LAttributeN ->> RAttribute1 ... RAttributeN
+[success] Multivalued dependencies provided.
+
+The normal form to convert the relation into:
+The available normal forms: (UNF, 1NF, 2NF, 3NF, BCNF, 4NF)
+[success] Normal form provided.
+
+[notice] CSV files will have heuristically generated SQL data types. It is recommended to review the data types for the attributes after the normalization process.
+[notice] CSV relation schemas are automatically in 1NF due to the standard of CSV files.
+
+Beginning normalization process...
+
+Converting LOTS to 2NF...
+  Dependency that violates 2NF: (CountyName -> TaxRate)
+        Creating relation LOTS_1...
+[success] 2NF conversion completed.
+
+Converting LOTS to 3NF...
+  Dependency that violates 3NF: (Area -> Price)
+        Creating relation LOTS_2...
+Converting LOTS_1 to 3NF...
+  LOTS_1 is already in 3NF.
+[success] 3NF conversion completed.
+
+[success] Normalization process complete.
+
+CREATE TABLE LOTS (
+        PropertyID INT,
+        CountyName VARCHAR(255),
+        LotNumber INT,
+        Area VARCHAR(255),
+        PRIMARY KEY (PropertyID)
+);
+
+CREATE TABLE LOTS_1 (
+        CountyName VARCHAR(255),
+        TaxRate REAL,
+        PRIMARY KEY (CountyName)
+);
+
+CREATE TABLE LOTS_2 (
+        Area VARCHAR(255),
+        Price REAL,
+        PRIMARY KEY (Area)
+);
 ```
 
 The tables given after a third normal form conversion:
-##### LOTS_3NF_3
+##### LOTS
 | *PropertyID* | CountyName | LotNumber | Area |
 |------------|------------|-----------|--------|
 
-##### LOTS_3NF_2
+##### LOTS_1
 | *CountyName* | TaxRate |
 |--------------|---------|
 
-##### LOTS_3NF_4
+##### LOTS_2
 | *Area* | Price |
 |--------|-------|
 
-The SQL statements to create the tables:
-```
-CREATE TABLE LOTS_3NF_3 (
-	PropertyID INT,
-	CountyName VARCHAR(255),
-	LotNumber INT,
-	Area VARCHAR(255),
-	PRIMARY KEY (PropertyID)
-);
-
-CREATE TABLE LOTS_3NF_2 (
-	CountyName VARCHAR(255),
-	TaxRate REAL,
-	PRIMARY KEY (CountyName)
-);
-
-CREATE TABLE LOTS_3NF_4 (
-	Area VARCHAR(255),
-	Price REAL,
-	PRIMARY KEY (Area)
-);
-```
-
 ## Tests
-I have provided many PowerShell scripts for testing first, second, third, and Boyce-Codd normal forms in [tests/scripts](https://github.com/imjacobtw/relation-normalizer/tree/main/tests/scripts). You will have to adjust the scripts to use the absolute file paths to the input on your machine if you intend to run the automated tests yourself. The input relations can be found in [tests/input](https://github.com/imjacobtw/relation-normalizer/tree/main/tests/input). These are the normal forms each relation tests for:
+I have provided many Pytest and PowerShell scripts for testing first, second, third, and Boyce-Codd normal forms in [tests](https://github.com/imjacobtw/relation-normalizer/tree/main/tests/). The input relations can be found in [tests/input](https://github.com/imjacobtw/relation-normalizer/tree/main/tests/input). These are the normal forms each relation tests for:
 - [employee_departments.csv](https://github.com/imjacobtw/relation-normalizer/blob/main/tests/input/employee_departments.csv) (Third Normal Form)
 - [employee_projects.csv](https://github.com/imjacobtw/relation-normalizer/blob/main/tests/input/employee_projects.csv) (Second Normal Form)
-- [lots_3nf.csv](https://github.com/imjacobtw/relation-normalizer/blob/main/tests/input/lots_3nf.csv) (Third Normal Form)
-- [lots_bcnf.csv](https://github.com/imjacobtw/relation-normalizer/blob/main/tests/input/lots_bcnf.csv) (Boyce-Codd Normal Form)
+- [lots.csv](https://github.com/imjacobtw/relation-normalizer/blob/main/tests/input/lots.csv) (Third Normal Form)
+- [lots1a.csv](https://github.com/imjacobtw/relation-normalizer/blob/main/tests/input/lots1a.csv) (Boyce-Codd Normal Form)
 
-The images in [docs](https://github.com/imjacobtw/relation-normalizer/tree/main/docs) give a visual representation for all of these tests. All of these examples are provided by *Fundamentals of Database Systems 7th Edition by Elmasri and Navathe.*
+All of these examples are from Chapter 14 of *Fundamentals of Database Systems 7th Edition by Elmasri and Navathe.*

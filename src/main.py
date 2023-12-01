@@ -63,9 +63,6 @@ def main(args: List[str]) -> None:
             normal_form
         )
 
-        for relation in normalized_relations:
-            print(relation)
-
         iohandler.print_status_message("Normalization process complete.\n", "success")
         print(sqlgenerator.generate_sql_statements(normalized_relations))
     except Exception as e:
